@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+rm -rf ghc-8.8.4-native
+rm -rf ghc-8.8.4-native
+rm -rf ghc-8.8.4.tar.xz
