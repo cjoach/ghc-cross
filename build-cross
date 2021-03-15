@@ -14,5 +14,5 @@ then
 fi
 
 cd ghc-8.8.4-cross
-./configure --target=arm-linux-gnueabihf --enable-unregistered
+./configure --target=arm-linux-gnueabihf --enable-unregisterised
 make -j8
