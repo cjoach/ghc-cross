@@ -6,8 +6,12 @@ set -o nounset
 set -o pipefail
 shopt -s inherit_errexit
 
+
+export BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+export BOOTSTRAP_HASKELL_GHC_VERSION=8.8.4
+curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+
 sudo apt-get install -y \
-  gcc \
   gcc-arm-linux-gnueabihf \
   atool \
   ghc \
@@ -20,11 +24,6 @@ sudo apt-get install -y \
   libgmp-dev \
   libncurses-dev
 
-if [[ ! -d "${HOME}/.cabal/store/ghc-8.6.5/package.db" ]]
-then
-  echo "" | cabal new-repl --build-dep fail
-fi
-cabal new-update
 cabal new-install alex happy
 
 if [[ ! -f "ghc-8.8.4.tar.xz" ]]

@@ -6,13 +6,12 @@ set -o nounset
 set -o pipefail
 shopt -s inherit_errexit
 
-if [[ ! -d "ghc-8.8.4-cross" ]]
+if [[ ! -d "ghc-8.8.4" ]]
 then
   atool -x ghc-8.8.4.tar.xz
-  mv ghc-8.8.4 ghc-8.8.4-cross
-  cp build-cross.mk ghc-8.8.4-cross/mk/build.mk
+  cp build.mk ghc-8.8.4/mk/build.mk
 fi
 
-cd ghc-8.8.4-cross
+cd ghc-8.8.4
 ./configure --target=arm-linux-gnueabihf --enable-unregisterised
-make -j8
+# make -j8
