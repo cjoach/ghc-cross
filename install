@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o errtrace
+set -o nounset
+set -o pipefail
+shopt -s inherit_errexit
+
+sudo apt-get install -y \
+  gcc \
+  gcc-arm-linux-gnueabihf \
+  atool \
+  ghc \
+  cabal-install \
+  llvm-7 \
+  build-essential \
+  git \
+  autoconf \
+  python3 \
+  libgmp-dev \
+  libncurses-dev
+
+if [[ ! -d "${HOME}/.cabal/store/ghc-8.6.5/package.db" ]]
+then
+  echo "" | cabal new-repl --build-dep fail
+fi
+cabal new-update
+cabal new-install alex happy
+
+if [[ ! -f "ghc-8.8.4.tar.xz" ]]
+then
+  curl -o ghc-8.8.4.tar.xz https://downloads.haskell.org/~ghc/8.8.4/ghc-8.8.4-src.tar.xz
+fi

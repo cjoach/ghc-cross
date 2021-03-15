@@ -1,3 +1,4 @@
 ghc-8.8.4.tar.xz
 ghc-8.8.4-native/
 ghc-8.8.4-cross/
+dist/

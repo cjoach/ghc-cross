@@ -6,27 +6,6 @@ set -o nounset
 set -o pipefail
 shopt -s inherit_errexit
 
-sudo apt-get install -y \
-  gcc-arm-linux-gnueabihf \
-  atool \
-  ghc \
-  cabal-install \
-  llvm-7 \
-  build-essential \
-  git \
-  autoconf \
-  python3 \
-  libgmp-dev \
-  libncurses-dev
-
-cabal new-update
-cabal new-install alex happy
-
-if [[ ! -f "ghc-8.8.4.tar.xz" ]]
-then
-  curl -o ghc-8.8.4.tar.xz https://downloads.haskell.org/~ghc/8.8.4/ghc-8.8.4-src.tar.xz
-fi
-
 if [[ ! -d "ghc-8.8.4-cross" ]]
 then
   atool -x ghc-8.8.4.tar.xz
@@ -35,6 +14,5 @@ then
 fi
 
 cd ghc-8.8.4-cross
-./boot
 ./configure --target=arm-linux-gnueabihf --enable-unregistered
 make -j8
