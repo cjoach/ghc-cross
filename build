@@ -13,5 +13,6 @@ then
 fi
 
 cd ghc-8.8.4
+export CC=/opt/rpi/rpi-gcc-8.3.0/bin/arm-linux-gnueabihf-gcc
 ./configure --target=arm-linux-gnueabihf --enable-unregisterised
-# make -j8
+make -j8
