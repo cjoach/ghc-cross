@@ -1,16 +1,8 @@
 ################################################################################
-## builder image
+## base image
 ################################################################################
 
-FROM debian:buster AS builder
-
-SHELL ["/bin/bash", "-c"]
-
-WORKDIR /
-
-################################################################################
-## install dependencies
-################################################################################
+FROM debian:buster AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN dpkg --add-architecture armhf && \
@@ -20,66 +12,55 @@ RUN dpkg --add-architecture armhf && \
         binutils-arm-linux-gnueabihf \
         build-essential \
         ca-certificates \
-        cabal-install \
         coreutils \
         cpp-arm-linux-gnueabihf \
         curl \
         gcc-arm-linux-gnueabihf \
-        ghc \
         git \
         libc-dev:armhf \
         libc6-armhf-cross \
         libffi-dev \
         libffi6 \
         libgmp-dev \
+        libgmp-dev:armhf \
         libgmp10 \
         libncurses-dev \
         libncurses-dev:armhf \
-        libncurses6 \
-        libncurses6:armhf \
+        libncurses5 \
+        libncurses5:armhf \
         libtinfo-dev:armhf \
-        libtinfo6 \
+        libtinfo5 \
         linux-libc-dev-armhf-cross \
         llvm-7 \
         python3 \
         sed \
         && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
- 
-################################################################################
-## install ghc and cabal from ghcup
-################################################################################
- 
-# RUN update-ca-certificates
-# ENV PATH="/root/.ghcup/bin:${PATH}"
-# ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
-# ENV BOOTSTRAP_HASKELL_GHC_VERSION=8.8.4
-# RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+    rm -rf /var/lib/apt/lists/* && \
+    update-ca-certificates
 
 ################################################################################
-## install cabal dependencies
+## builder image
 ################################################################################
 
-RUN cabal update && \
-    cabal install alex happy
+FROM base AS builder
 
-################################################################################
-## download files
-################################################################################
+SHELL ["/bin/bash", "-c"]
 
-RUN curl -o ghc-8.8.4.tar.xz https://downloads.haskell.org/ghc/8.8.4/ghc-8.8.4-src.tar.xz && \
-    tar xf ghc-8.8.4.tar.xz && \
-    echo $'Stage1Only = YES\n\
+ENV PATH="/root/.ghcup/bin:${PATH}"
+
+ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+ENV BOOTSTRAP_HASKELL_GHC_VERSION=8.8.4
+RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+
+RUN cabal new-install alex happy
+
+RUN curl -o ghc-8.8.4.tar.xz https://downloads.haskell.org/ghc/8.8.4/ghc-8.8.4-src.tar.xz
+RUN tar xf ghc-8.8.4.tar.xz
+RUN echo $'Stage1Only = YES\n\
 HADDOCK_DOCS = NO\n\
-INTEGER_LIBRARY = integer-simple\n\
 WITH_TERMINFO = NO\n\
 BuildFlavour = perf-cross' > /ghc-8.8.4/mk/build.mk
-
-################################################################################
-## build ghc cross compiler and install in /usr/local
-################################################################################
 
 WORKDIR /ghc-8.8.4
 
@@ -91,8 +72,11 @@ RUN make install
 ## main image
 ################################################################################
 
-FROM debian:buster
+FROM base
 
 SHELL ["/bin/bash", "-c"]
 
+ENV PATH="/root/.ghcup/bin:${PATH}"
+
 COPY --from=builder /usr/local /usr/local
+COPY --from=builder /root/.ghcup /root/.ghcup
