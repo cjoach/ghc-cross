@@ -47,6 +47,17 @@ RUN dpkg --add-architecture armhf && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+ 
+################################################################################
+## install ghc and cabal from ghcup
+################################################################################
+ 
+# RUN update-ca-certificates
+# ENV PATH="/root/.ghcup/bin:${PATH}"
+# ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+# ENV BOOTSTRAP_HASKELL_GHC_VERSION=8.8.4
+# RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+
 ################################################################################
 ## install cabal dependencies
 ################################################################################
