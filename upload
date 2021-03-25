@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+REGISTRY_TAG="registry.gitlab.com/auto-orisha/goose-control/ghc-884-armhf:latest"
+docker tag ghc-884-armhf:latest "${REGISTRY_TAG}"
+docker push "${REGISTRY_TAG}"

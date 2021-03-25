@@ -80,3 +80,11 @@ ENV PATH="/root/.ghcup/bin:${PATH}"
 
 COPY --from=builder /usr/local /usr/local
 COPY --from=builder /root/.ghcup /root/.ghcup
+
+RUN echo $'cabal new-build \
+--with-ghc="/usr/local/bin/arm-linux-gnueabihf-ghc" \
+--with-ghc-pkg="/usr/local/bin/arm-linux-gnueabihf-ghc-pkg" \
+--with-runghc="/usr/local/bin/arm-linux-gnueabihf-runghc" \
+--with-hsc2hs="/usr/local/bin/arm-linux-gnueabihf-hsc2hs" \
+"${@}"' > /usr/local/bin/cabal-arm-build && \
+    chmod +x /usr/local/bin/cabal-arm-build
